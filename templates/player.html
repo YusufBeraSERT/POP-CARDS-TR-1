@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>🎬 MP4 İzle / Dinle & Otomatik Puan Kazan</h2>
+<p>Grupların kliplerini veya şarkılarını sonuna kadar izle/dinle, puanlar anında hesabına yüklensin!</p>
+
+<div class="video-grid">
+    {% for song in songs %}
+    <div class="card-panel video-card">
+        <h3>🎵 {{ song.artist }} - {{ song.title }}</h3>
+        <span class="reward-badge">+{{ song.reward_points }} Puan Ödüllü</span>
+        
+        <video controls width="100%" onended="rewardUser({{ song.reward_points }}, '{{ song.title }}')">
+            <source src="{{ song.video_url }}" type="video/mp4">
+            Tarayıcınız video etiketini desteklemiyor.
+        </video>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function rewardUser(points, songTitle) {
+    fetch('/api/add_points', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: points })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("🎉 Tebrikler! '" + songTitle + "' şarkısını bitirdin ve +" + points + " Puan Kazandın!");
+        document.getElementById('user-points-display').innerText = data.new_points;
+    });
+}
+</script>
+{% endblock %}
