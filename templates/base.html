@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POP CARDS TR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">⚡ POP CARDS TR</div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">📲 1. Sosyal Akış</a>
+            <a href="{{ url_for('store') }}">🎴 2. Kart Mağazası</a>
+            <a href="{{ url_for('player') }}">🎬 3. Video & MP4 Dinle</a>
+        </div>
+        <div class="user-badge">
+            👤 <span>{{ user.username }}</span> | 🪙 <strong id="user-points-display">{{ user.points }}</strong> Puan
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
