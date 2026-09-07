@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid-layout">
+
+    <div class="main-feed">
+        <!-- Gönderi Paylaşma Kutusu -->
+        <div class="card-panel create-post">
+            <h3>⚡ Fotoğraf Paylaş & Puan Kazan (+50 Puan)</h3>
+            <form action="{{ url_for('post_share') }}" method="POST">
+                <input type="text" name="username" placeholder="Adın / Kullanıcı Adın" required>
+                
+                <select name="artist" required>
+                    <option value="" disabled selected>Grup Seç</option>
+                    <option value="Karma">Karma</option>
+                    <option value="Manifest">Manifest</option>
+                    <option value="Aura">Aura</option>
+                    <option value="Radikal">Radikal</option>
+                    <option value="CRUSH">CRUSH</option>
+                </select>
+
+                <textarea name="caption" placeholder="Dinlediğin şarkı veya üye hakkında bir şeyler yaz..." required></textarea>
+                <input type="url" name="image_url" placeholder="Kanıt Fotoğrafı URL Bağlantısı (Opsiyonel)">
+                
+                <button type="submit" class="btn btn-primary">🚀 Akışta Paylaş & Puanı Kap</button>
+            </form>
+        </div>
+
+        <!-- Canlı Akış -->
+        <h2>🌐 Canlı Akış</h2>
+        
+        {% if not posts %}
+            <div class="card-panel empty-feed">
+                <p>Henüz kimse gönderi paylaşmadı. İlk paylaşımı yapıp akışı başlatmaya ne dersin? 🚀</p>
+            </div>
+        {% endif %}
+
+        {% for post in posts %}
+        <div class="card-panel post">
+            <div class="post-header">
+                <strong>👤 {{ post.username }}</strong>
+                <span class="badge">{{ post.artist }}</span>
+                <small>{{ post.timestamp }}</small>
+            </div>
+            <p class="post-caption">{{ post.caption }}</p>
+            <img src="{{ post.image }}" alt="Kanıt Görseli" class="post-img">
+            
+            <div class="post-footer">
+                <!-- Sadece 1 Kere Kalp Atabilme Kodu -->
+                <button class="btn-like" onclick="toggleLike(this)">
+                    🤍 <span class="like-count">0</span> Kalp
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Skor Tablosu -->
+    <div class="sidebar">
+        <div class="card-panel sticky">
+            <h2>🏆 En Çok Kart & Puan Sahibi Olanlar</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kullanıcı</th>
+                        <th>Puan</th>
+                        <th>Kart</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in leaderboard %}
+                    <tr class="{% if player.username == user.username %}active-user{% endif %}">
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ player.username }}</strong></td>
+                        <td>🪙 {{ player.points }}</td>
+                        <td>🎴 {{ player.cards_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Sadece 1 Kalp Atmayı Sağlayan JavaScript Fonksiyonu
+function toggleLike(btn) {
+    let countSpan = btn.querySelector('.like-count');
+    let currentLikes = parseInt(countSpan.innerText);
+
+    if (btn.classList.contains('liked')) {
+        btn.classList.remove('liked');
+        btn.innerHTML = '🤍 <span class="like-count">' + (currentLikes - 1) + '</span> Kalp';
+    } else {
+        btn.classList.add('liked');
+        btn.innerHTML = '❤️ <span class="like-count">' + (currentLikes + 1) + '</span> Kalp';
+    }
+}
+</script>
+{% endblock %}
